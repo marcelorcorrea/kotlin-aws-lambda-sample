@@ -1,0 +1,44 @@
+group 'com.marcelorcorrea'
+
+buildscript {
+    ext.kotlin_version = '1.1.2-5'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version",
+            "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version",
+            "com.amazonaws:aws-lambda-java-core:1.1.0",
+            "com.fasterxml.jackson.module:jackson-module-kotlin:2.8.9")
+
+    testCompile 'junit:junit:4.11'
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+}
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.10"
+}
+
+task buildZip(type: Zip) {
+    from compileKotlin
+    from processResources
+    into('lib') {
+        from configurations.runtime
+    }
+}
+
+build.dependsOn buildZip
